@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Services\CorbadoAPI;
 
 class ProfileController extends Controller
 {
@@ -18,9 +19,15 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+
+        $corbado = new CorbadoAPI();
+        $data = $corbado->getAssociationToken($request, 'email');
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'associationToken' => $data['data']['token'],
+            'projectId' => config('corbado.project_id'),
         ]);
     }
 

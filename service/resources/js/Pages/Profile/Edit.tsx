@@ -4,8 +4,20 @@ import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import { Head } from '@inertiajs/react';
 import { PageProps } from '@/types';
-
-export default function Edit({ auth, mustVerifyEmail, status }: PageProps<{ mustVerifyEmail: boolean, status?: string }>) {
+import "@corbado/webcomponent"
+import {useState, useEffect} from "react";
+const PASSKEY_CREATION_SUCCESSFUL = "PASSKEY_CREATION_SUCCESSFUL"
+const PASSKEY_CREATION_FAILED = "PASSKEY_CREATION_FAILED"
+const DEVICE_NOT_PASSKEY_READY = "DEVICE_NOT_PASSKEY_READY"
+export default function Edit({ auth, mustVerifyEmail, status, associationToken, projectId }: PageProps<{ mustVerifyEmail: boolean, status?: string, associationToken: string, projectId: string }>) {
+    const [ref, setRef] = useState(null)
+    useEffect(() => {
+        if(ref) {
+          (ref as HTMLElement).addEventListener(PASSKEY_CREATION_FAILED, (e) => {
+            alert("Failed to create passkey")
+          })
+        }
+    }, [ref])
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -23,6 +35,13 @@ export default function Edit({ auth, mustVerifyEmail, status }: PageProps<{ must
                         />
                     </div>
 
+
+                    <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                        <h2>Passkeys</h2>
+                        <corbado-passkey-associate project-id={projectId} association-token={associationToken} ref={setRef} />
+                    </div>
+
+
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                         <UpdatePasswordForm className="max-w-xl" />
                     </div>
@@ -32,6 +51,7 @@ export default function Edit({ auth, mustVerifyEmail, status }: PageProps<{ must
                     </div>
                 </div>
             </div>
+
         </AuthenticatedLayout>
     );
 }
