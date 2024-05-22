@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mysql:8.0.37
+    container_name: app_db
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+volumes:
+  db_data:
+    driver: local
